@@ -1,204 +1,110 @@
 import streamlit as st
-import sqlite3
+import pandas as pd
 from datetime import datetime
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
-from reportlab.lib.styles import getSampleStyleSheet
-import openai
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_RIGHT
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 
-# ================== إعدادات ==================
-st.set_page_config(page_title="المنصور استراتيجي", layout="centered")
+# ================== إعدادات الواجهة الملكية وإخفاء الأدوات ==================
+st.set_page_config(page_title="المنصور استراتيجي", layout="wide")
 
-openai.api_key = "YOUR_API_KEY"
+hide_style = """
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+    
+    * { font-family: 'Cairo', sans-serif; }
+    div[data-testid="stToolbar"], #MainMenu, footer, header {visibility: hidden;}
+    .stApp {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        color: #f1f5f9;
+    }
+    .main-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid #fbbf24;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    h1, h2, h3 { color: #fbbf24 !important; text-align: right; }
+    .stButton>button {
+        background: linear-gradient(90deg, #d97706 0%, #fbbf24 100%);
+        color: white; border: none; border-radius: 10px; width: 100%;
+        font-weight: bold; transition: 0.3s;
+    }
+    .stButton>button:hover { transform: scale(1.02); box-shadow: 0 5px 15px rgba(251, 191, 36, 0.4); }
+    </style>
+"""
+st.markdown(hide_style, unsafe_allow_html=True)
 
-ADMIN_EMAIL = "almansoourd@gmail.com"
-WHATSAPP_LINK = "https://wa.me/967774575749"
-
-# ================== قاعدة البيانات ==================
-conn = sqlite3.connect("almansour.db", check_same_thread=False)
-c = conn.cursor()
-
-c.execute("""
-CREATE TABLE IF NOT EXISTS reports (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user TEXT,
-    title TEXT,
-    content TEXT,
-    created_at TEXT
-)
-""")
-
-# ================== إدارة الاستخدام ==================
-if "usage" not in st.session_state:
-    st.session_state.usage = 0
-
-FREE_LIMIT = 3
-
-# ================== AI تحسين ==================
-def enhance_text(text, mode):
-    prompt = f"""
-    أنت خبير تقارير دولية.
-    قم بإعادة صياغة النص التالي بأسلوب {mode} احترافي دون تغيير المعنى:
-
-    {text}
-    """
-
-    response = openai.ChatCompletion.create(
-        model="gpt-4",
-        messages=[{"role": "user", "content": prompt}]
-    )
-
-    return response.choices[0].message.content
-
-# ================== PDF ==================
+# ================== المساعد الذكي ووظائف PDF ==================
 def create_pdf(title, content):
-    file_name = "report.pdf"
+    file_name = "AlMansour_Report.pdf"
     doc = SimpleDocTemplate(file_name)
     styles = getSampleStyleSheet()
-
+    # إضافة ستايل يدعم التنسيق العربي (تقريبي بدون مكتبات معقدة)
+    rtl_style = ParagraphStyle('rtl', parent=styles['Normal'], alignment=TA_RIGHT, fontSize=12)
+    
     story = []
     story.append(Paragraph(f"<b>{title}</b>", styles["Title"]))
     story.append(Spacer(1, 12))
-    story.append(Paragraph(content.replace("\n", "<br/>"), styles["Normal"]))
-
+    story.append(Paragraph(content.replace("\n", "<br/>"), rtl_style))
     doc.build(story)
     return file_name
 
-# ================== Login ==================
-if "user" not in st.session_state:
+# ================== واجهة المنصة ==================
+with st.container():
+    st.markdown('<div class="main-card">', unsafe_allow_html=True)
     st.title("🚀 منصة المنصور الاستراتيجية")
+    st.markdown("---")
+    
+    col1, col2 = st.columns([1, 1])
+    
+    with col2:
+        report_type = st.selectbox("🎯 نوع التقرير", 
+            ["تقرير إنجاز ميداني", "تقرير مالي استراتيجي", "محضر اجتماع مجلس إدارة", "تقرير تحليل مخاطر"])
+        project_name = st.text_input("📝 اسم المشروع / الجهة")
+    
+    with col1:
+        date_now = st.date_input("📅 التاريخ", datetime.now())
+        prepared_by = st.text_input("👨‍💼 إعداد المستشار", "منصور أحمد سعيد")
 
-    email = st.text_input("📧 البريد الإلكتروني")
-    if st.button("دخول"):
-        if email:
-            st.session_state.user = email
-            st.session_state.is_admin = email == ADMIN_EMAIL
-            st.rerun()
+    st.markdown("### 🔍 تفاصيل التقرير الاستراتيجية")
+    
+    q1 = st.text_area("1. ما هي الأهداف المحققة في هذه الفترة؟")
+    q2 = st.text_area("2. أبرز التحديات التي واجهت سير العمل؟")
+    q3 = st.text_area("3. التوصيات والخطوات القادمة؟")
 
-    st.stop()
+    if st.button("💎 توليد التقرير الماسي"):
+        if project_name and q1:
+            full_content = f"""
+            الجهة: {project_name}
+            النوع: {report_type}
+            المستشار: {prepared_by}
+            تاريخ التقرير: {date_now}
+            
+            الأهداف المحققة:
+            {q1}
+            
+            التحديات المرصودة:
+            {q2}
+            
+            التوصيات الاستراتيجية:
+            {q3}
+            """
+            
+            st.success("✅ تم صياغة التقرير بنجاح")
+            st.text_area("📄 المعاينة النهائية", full_content, height=250)
+            
+            # زر التحميل
+            pdf_path = create_pdf(project_name, full_content)
+            with open(pdf_path, "rb") as f:
+                st.download_button("📥 تحميل التقرير بصيغة PDF", f, file_name=f"{project_name}.pdf")
+        else:
+            st.error("⚠️ فضلاً املأ البيانات الأساسية أولاً")
+            
+    st.markdown('</div>', unsafe_allow_html=True)
 
-# ================== الحد المجاني ==================
-if st.session_state.usage >= FREE_LIMIT and not st.session_state.is_admin:
-    st.warning("🚫 انتهت التجربة المجانية")
-    st.markdown(f"[📞 تواصل للاشتراك]({WHATSAPP_LINK})")
-    st.stop()
-
-# ================== الواجهة ==================
-st.title("📊 منصة التقارير الذكية")
-st.write(f"👤 المستخدم: {st.session_state.user}")
-
-# ================== أنواع التقارير ==================
-report_types = [
-    "📊 تقرير إنجاز",
-    "💰 تقرير مالي",
-    "🏥 تقرير طبي",
-    "💻 تقرير تقني",
-    "🏗 تقرير ميداني",
-    "👥 محضر اجتماع",
-    "📢 تقرير تسويقي"
-]
-
-r_type = st.selectbox("اختر نوع التقرير", report_types)
-
-project = st.text_input("اسم المشروع")
-goal = st.text_area("الأهداف")
-challenge = st.text_area("التحديات")
-results = st.text_area("النتائج")
-
-# ================== مساعد الصياغة ==================
-def ai_buttons(label, text_key):
-    col1, col2, col3, col4 = st.columns(4)
-
-    if col1.button(f"✨ {label} احترافي"):
-        if st.session_state.get(text_key):
-            st.session_state[f"{text_key}_ai"] = enhance_text(st.session_state[text_key], "احترافي")
-
-    if col2.button(f"📈 {label} تحليل"):
-        if st.session_state.get(text_key):
-            st.session_state[f"{text_key}_ai"] = enhance_text(st.session_state[text_key], "تحليلي")
-
-    if col3.button(f"🧾 {label} رسمي"):
-        if st.session_state.get(text_key):
-            st.session_state[f"{text_key}_ai"] = enhance_text(st.session_state[text_key], "رسمي")
-
-    if col4.button(f"⚡ {label} مختصر"):
-        if st.session_state.get(text_key):
-            st.session_state[f"{text_key}_ai"] = enhance_text(st.session_state[text_key], "مختصر")
-
-    if f"{text_key}_ai" in st.session_state:
-        st.info(st.session_state[f"{text_key}_ai"])
-
-        if st.button(f"✔ اعتماد {label}"):
-            st.session_state[text_key] = st.session_state[f"{text_key}_ai"]
-
-# ربط الحقول بالـ session
-st.session_state["goal"] = goal
-st.session_state["challenge"] = challenge
-st.session_state["results"] = results
-
-st.markdown("### 🧠 تحسين الأهداف")
-ai_buttons("الأهداف", "goal")
-
-st.markdown("### 🧠 تحسين التحديات")
-ai_buttons("التحديات", "challenge")
-
-st.markdown("### 🧠 تحسين النتائج")
-ai_buttons("النتائج", "results")
-
-# ================== توليد التقرير ==================
-if st.button("🚀 توليد التقرير"):
-    content = f"""
-    نوع التقرير: {r_type}
-
-    اسم المشروع:
-    {project}
-
-    الأهداف:
-    {st.session_state.get("goal","")}
-
-    التحديات:
-    {st.session_state.get("challenge","")}
-
-    النتائج:
-    {st.session_state.get("results","")}
-    """
-
-    c.execute(
-        "INSERT INTO reports (user, title, content, created_at) VALUES (?, ?, ?, ?)",
-        (st.session_state.user, project, content, str(datetime.now()))
-    )
-    conn.commit()
-
-    st.success("✅ تم إنشاء التقرير")
-
-    st.text_area("📄 التقرير النهائي", content, height=300)
-
-    pdf = create_pdf(project, content)
-    with open(pdf, "rb") as f:
-        st.download_button("📥 تحميل PDF", f, file_name="report.pdf")
-
-    st.session_state.usage += 1
-
-# ================== الأرشيف ==================
-st.markdown("## 📁 الأرشيف")
-
-rows = c.execute(
-    "SELECT title, created_at FROM reports WHERE user=? ORDER BY id DESC",
-    (st.session_state.user,)
-).fetchall()
-
-for r in rows:
-    st.write(f"📄 {r[0]} | {r[1]}")
-
-# ================== Admin ==================
-if st.session_state.is_admin:
-    st.markdown("## ⚙️ لوحة المدير")
-    all_reports = c.execute("SELECT user, title FROM reports").fetchall()
-    st.write(all_reports)
-
-# ================== واتساب ==================
-st.markdown(f"[📞 تواصل واتساب]({WHATSAPP_LINK})")
-
-# ================== تسجيل خروج ==================
-if st.button("تسجيل الخروج"):
-    st.session_state.clear()
-    st.rerun()
+# ================== تذييل المنصة ==================
+st.markdown("<br><center>🛡️ جميع الحقوق محفوظة لشبكة المنصور للاستشارات 2026</center>", unsafe_allow_html=True)
