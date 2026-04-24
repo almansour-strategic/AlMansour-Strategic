@@ -3,57 +3,83 @@ from datetime import datetime
 from docx import Document
 from io import BytesIO
 
-# ================== 1. التنسيق البصري المؤسسي (فخامة رسمية) ==================
-st.set_page_config(page_title="المنصور AI - الاستشاري الدولي", layout="centered")
+# ================== 1. الهوية البصرية الملكية (فخامة مؤسسية) ==================
+st.set_page_config(page_title="المنصور AI - الإصدار المستقر V27", layout="centered")
 
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+    
+    /* إخفاء أدوات المنصة للخصوصية */
     div[data-testid="stToolbar"], #MainMenu, footer, header, .stDeployButton { display: none !important; }
+    
     .stApp { background-color: #f8fafc; color: #1e293b; direction: rtl; }
+    
     .main-box {
-        background: #ffffff; border-top: 10px solid #1e3a8a; padding: 35px;
-        border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.05); margin-top: 5px;
+        background: #ffffff; border-top: 10px solid #1e3a8a; padding: 40px;
+        border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.05); margin-top: 10px;
     }
+
     * { font-family: 'Cairo', sans-serif !important; text-align: right; }
-    .brand-title { color: #1e3a8a !important; font-weight: 900 !important; font-size: 2.2rem !important; text-align: center; }
+    .brand-title { color: #1e3a8a !important; font-weight: 900 !important; font-size: 2.3rem !important; text-align: center; }
+    .methodology-tag { 
+        background: #1e3a8a; color: #fbbf24; padding: 6px 20px; border-radius: 25px; 
+        font-size: 0.85rem; display: table; margin: 10px auto 30px auto; font-weight: bold;
+    }
     .section-title { 
         color: #1e3a8a; font-size: 1.1rem; font-weight: 700; margin-top: 25px; margin-bottom: 15px; 
         border-right: 5px solid #fbbf24; padding-right: 12px; background: #f8fafc; padding: 10px; border-radius: 0 8px 8px 0;
     }
-    .hint-text { color: #7f8c8d; font-size: 0.8rem; margin-bottom: 10px; border-right: 2px solid #e2e8f0; padding-right: 8px; }
-    .magic-desc { color: #2563eb; font-size: 0.75rem; font-weight: 600; text-align: center; margin-bottom: 5px; }
-    .btn-gen button { background: linear-gradient(90deg, #1e3a8a, #d4af37) !important; color: white !important; font-weight: 700 !important; height: 55px !important; border-radius: 12px !important; width: 100% !important; border:none !important; }
+    .hint-text { color: #64748b; font-size: 0.82rem; margin-bottom: 12px; border-right: 2px solid #cbd5e1; padding-right: 10px; line-height: 1.5; }
+    .btn-gen button { background: linear-gradient(90deg, #1e3a8a, #d4af37) !important; color: white !important; font-weight: 700 !important; height: 58px !important; border-radius: 12px !important; width: 100% !important; border:none !important; }
     .export-btn button { background: #ffffff !important; color: #1e3a8a !important; border: 1px solid #1e3a8a !important; font-weight: 600 !important; height: 45px !important; width: 100% !important; }
     .whatsapp-btn { background: #25d366; color: white !important; padding: 12px 25px; border-radius: 50px; text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 10px; margin-top: 20px; }
     </style>
 """, unsafe_allow_html=True)
 
-# ================== 2. مصفوفة التقارير العالمية المعتمدة ==================
+# ================== 2. المنهجية العالمية (8 تخصصات سيادية كاملة) ==================
 GLOBAL_REPORTS = {
-    "📑 تقرير الإنجاز الدوري | Progress Report": ["ملخص التنفيذ", "تحليل الفجوات", "إدارة المخاطر", "آليات التجاوز"],
-    "🎓 تقرير ختامي لتدريب | Capacity Building": ["نتائج التقييم", "كفاءة المنهجية", "تفاعل المشاركين", "استدامة الأثر"],
-    "💰 تقرير الأداء المالي | Financial Report": ["تحليل المصروفات", "انحرافات التكلفة", "الامتثال والتدقيق", "توصيات الكفاءة"],
-    "📊 تقرير المتابعة والتقييم | M&E Report": ["مؤشرات الأداء", "جودة المخرجات", "الدروس المستفادة", "فرص التحسين"],
-    "🚑 تقرير تقييم الاحتياجات | Needs Assessment": ["تحليل الفجوة", "الفئات المستهدفة", "الأولويات العاجلة", "توصيات التدخل"],
-    "🏛️ تقرير الحوكمة والامتثال | Compliance": ["الالتزام باللوائح", "نتائج الرقابة", "الثغرات المرصودة", "إجراءات التصحيح"],
-    "🌍 تقرير الأثر البيئي والاجتماعي | ESIA": ["الأثر البيئي", "المسؤولية المجتمعية", "إجراءات التخفيف", "الاستدامة"],
-    "🏗️ تقرير فني وهندسي | Technical Report": ["المواصفات الفنية", "اختبارات الجودة", "المعوقات التقنية", "الحلول المنفذة"]
+    "📑 تقرير الإنجاز الدوري | Progress Report": {
+        "q": ["ملخص التنفيذ ومستوى الإنجاز العام", "تحليل الانحرافات عن الخطة الزمنية", "إدارة التحديات والمخاطر الميدانية", "آليات التجاوز والخطوات التصحيحية"],
+        "h": ["أبرز ما تم تحقيقه مقابل الخطة...", "الأسباب الكامنة وراء أي تأخير مرصود...", "المخاطر التي هددت سير العمل...", "الإجراءات المنفذة لضمان الاستمرارية..."]
+    },
+    "🎓 تقرير ختامي لتدريب | Capacity Building Report": {
+        "q": ["تحليل نتائج التقييم (القبلي والبعدي)", "تقييم كفاءة المادة العلمية والمنهجية", "تفاعل المشاركين والبيئة التدريبية", "توصيات استدامة الأثر التدريبي"],
+        "h": ["قياس الفارق المعرفي وتطور المهارات...", "مدى ملاءمة المحتوى للاحتياجات...", "المعوقات اللوجستية والتنظيمية...", "خطة نقل المعرفة لمكان العمل..."]
+    },
+    "💰 تقرير الأداء المالي | Financial Performance": {
+        "q": ["تحليل المصروفات الفعلية مقابل المخطط", "تحليل انحرافات التكلفة (Variance)", "الامتثال المالي ومعايير التدقيق", "توصيات كفاءة الإنفاق للفترة القادمة"],
+        "h": ["مقارنة رقمية دقيقة بين المنفق والمخطط...", "تبرير منطقي لأي تجاوز مالي...", "مطابقة العمليات للوائح الدولية...", "سياسات ترشيد الإنفاق القادم..."]
+    },
+    "📊 تقرير المتابعة والتقييم | M&E Report": {
+        "q": ["قياس مؤشرات الأداء الرئيسية (KPIs)", "جودة المخرجات ورضا أصحاب المصلحة", "الدروس المستفادة والفرص الضائعة", "فرص التحسين وتطوير المنهجية"],
+        "h": ["مدى تحقيق النتائج المقررة بالأرقام...", "نتائج الاستبيانات والمقابلات الميدانية...", "تجارب للتعميم أو أخطاء لتجنبها...", "مقترحات لتحسين كفاءة التدخلات القادمة..."]
+    },
+    "🚑 تقرير تقييم الاحتياجات | Needs Assessment": {
+        "q": ["تحليل الوضع الراهن وفجوة الاحتياج", "تحديد الفئات الأكثر تضرراً واحتياجاً", "الأولويات العاجلة للاستجابة", "توصيات التدخل والتمويل"],
+        "h": ["وصف دقيق للأزمة أو الاحتياج المرصود...", "بيانات ديموغرافية للفئات المستهدفة...", "ما هي الاحتياجات غير القابلة للتأجيل؟", "خارطة طريق مقترحة للمانحين..."]
+    },
+    "🏛️ تقرير الحوكمة والامتثال | Compliance Report": {
+        "q": ["الالتزام باللوائح والسياسات المؤسسية", "نتائج الرقابة والتدقيق الداخلي", "الثغرات المرصودة في نظام الحوكمة", "إجراءات التصحيح وتطوير الأداء"],
+        "h": ["مدى تطابق الممارسات مع المعايير...", "خلاصة عمليات الفحص الدورية...", "نقاط الضعف في الهيكل التنظيمي...", "خطوات سد الثغرات القانونية..."]
+    },
+    "🌍 تقرير الأثر البيئي والاجتماعي | ESIA Report": {
+        "q": ["تحليل الأثر البيئي والحيوي للمشروع", "المسؤولية المجتمعية ورضا المستفيدين", "إجراءات التخفيف من الآثار الجانبية", "استدامة الموارد وحماية البيئة"],
+        "h": ["تقييم تأثير العمليات على البيئة...", "مدى قبول وتفاعل المجتمع المحلي...", "كيفية التعامل مع الأضرار الجانبية...", "خطط الحفاظ على الموارد..."]
+    },
+    "🏗️ تقرير فني وهندسي | Technical Report": {
+        "q": ["المواصفات الفنية ومطابقة المواد", "نتائج اختبارات الجودة الميدانية", "المعوقات الإنشائية والتحديات التقنية", "التعديلات والحلول الهندسية المنفذة"],
+        "h": ["مدى التزام الموردين بالمواصفات...", "نتائج فحوصات المختبر والضغوط...", "الصعوبات التي واجهت التنفيذ...", "الحلول المبتكرة لتجاوز العقبات..."]
+    }
 }
 
-# ================== 3. محركات التشغيل والذاكرة ==================
-if "auth" not in st.session_state: st.session_state.auth = False
-if "form_data" not in st.session_state: st.session_state.form_data = {}
-
-def sync_val(key):
-    st.session_state.form_data[key] = st.session_state[key]
-
-# محرك التصدير (Word)
-def make_docx(p_name, rtype, donor, loc, agency, content_dict):
+# ================== 3. محرك المستندات (Word) ==================
+def get_word_file(p_name, rtype, donor, loc, agency, duration, content):
     doc = Document()
     doc.add_heading(f"تقرير {rtype}", 0)
-    doc.add_paragraph(f"المشروع: {p_name}\nالجهة المانحة: {donor}\nالموقع: {loc}\nالمنفذ: {agency}")
-    for title, text in content_dict.items():
+    doc.add_paragraph(f"المشروع: {p_name}\nالجهة المانحة: {donor}\nالجهة المنفذة: {agency}\nالموقع: {loc} | المدة: {duration}")
+    doc.add_paragraph(f"التاريخ: {datetime.now().strftime('%Y-%m-%d')}")
+    for title, text in content.items():
         doc.add_heading(title, level=1)
         doc.add_paragraph(text if text else "لا يوجد بيانات")
     bio = BytesIO()
@@ -62,69 +88,68 @@ def make_docx(p_name, rtype, donor, loc, agency, content_dict):
     return bio
 
 # ================== 4. نظام الدخول والواجهة ==================
+if "auth" not in st.session_state: st.session_state.auth = False
+
 if not st.session_state.auth:
     st.markdown('<div class="main-box">', unsafe_allow_html=True)
-    st.markdown('<h1 class="brand-title">بوابة المنصور AI</h1>', unsafe_allow_html=True)
-    e = st.text_input("البريد الإلكتروني")
-    p = st.text_input("كلمة المرور", type="password")
+    st.markdown('<h1 class="brand-title">المنصور AI</h1>', unsafe_allow_html=True)
     if st.button("دخول آمن للمنصة"):
-        if e and p: st.session_state.auth = True; st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
+        st.session_state.auth = True
+        st.rerun()
     st.stop()
 
 st.markdown('<div class="main-box">', unsafe_allow_html=True)
 st.markdown('<h1 class="brand-title">المنصور AI للتقارير الاحترافية</h1>', unsafe_allow_html=True)
-st.markdown('<div class="methodology-tag">صياغة استراتيجية وفق المنهجية العالمية (PMBOK / ISO / Kirkpatrick)</div>', unsafe_allow_html=True)
+st.markdown('<div class="methodology-tag">صياغة استراتيجية وفق المنهجية العالمية</div>', unsafe_allow_html=True)
 
-# الخطوة 1
-st.markdown('<p class="section-title">1. نوع التقرير الدولي</p>', unsafe_allow_html=True)
+# القسم 1
+st.markdown('<p class="section-title">نوع التقرير الدولي | Report Category</p>', unsafe_allow_html=True)
 rtype = st.selectbox("🎯 الخطوة 1: حدد التخصص لضبط المنهجية:", list(GLOBAL_REPORTS.keys()))
-fields = GLOBAL_REPORTS[rtype]
+cfg = GLOBAL_REPORTS[rtype]
 
-# الخطوة 2
-st.markdown('<p class="section-title">2. البيانات التعريفية</p>', unsafe_allow_html=True)
+# القسم 2
+st.markdown('<p class="section-title">البيانات التعريفية | Metadata</p>', unsafe_allow_html=True)
 c1, c2 = st.columns(2)
-p_name = c1.text_input("اسم المشروع *", key="p_name", on_change=sync_val)
-donor = c1.text_input("الجهة المانحة", key="donor", on_change=sync_val)
-loc = c2.text_input("مكان التنفيذ", key="loc", on_change=sync_val)
-agency = c2.text_input("الجهة المنفذة", key="agency", on_change=sync_val)
+p_name = c1.text_input("اسم المشروع / البرنامج *", placeholder="Project Name")
+donor = c1.text_input("الجهة المانحة", placeholder="Donor Agency")
+loc = c2.text_input("مكان التنفيذ", placeholder="Location")
+agency = c2.text_input("الجهة المنفذة", placeholder="Implementing Agency")
+duration = st.text_input("مدة التنفيذ", placeholder="Duration")
 
-# الخطوة 3
-st.markdown('<p class="section-title">3. المحاور الاستراتيجية</p>', unsafe_allow_html=True)
+# القسم 3
+st.markdown('<p class="section-title">المحاور الاستراتيجية للتقرير</p>', unsafe_allow_html=True)
 user_responses = {}
-for i, field in enumerate(fields):
-    st.markdown(f"<label>{field}</label>", unsafe_allow_html=True)
-    f_key = f"q_{i}_{rtype}"
-    txt = st.text_area("", key=f_key, height=100, label_visibility="collapsed", on_change=sync_val)
-    user_responses[field] = txt
+for i in range(4):
+    label = cfg["q"][i]
+    hint = cfg["h"][i]
+    st.markdown(f"<label>{label}</label>", unsafe_allow_html=True)
+    st.markdown(f"<p class='hint-text'>🔍 مثال توضيحي: {hint}</p>", unsafe_allow_html=True)
     
-    col_t, col_b = st.columns([4, 1.5])
+    col_t, col_b = st.columns([5, 1.5])
+    with col_t:
+        txt = st.text_area("", key=f"f_{i}_{rtype}", height=100, label_visibility="collapsed")
+        user_responses[label] = txt
     with col_b:
-        st.markdown('<p class="magic-desc">اضغط على زر تحسين لصياغة احترافية</p>', unsafe_allow_html=True)
         if st.button("✨ تحسين", key=f"btn_{i}_{rtype}"):
-            if txt: st.info(f"المقترح الاحترافي: {txt} (تمت المراجعة الاستراتيجية)")
+            if txt: st.info(f"المقترح الاحترافي: {txt} (تمت المراجعة)")
             else: st.warning("أدخل نصاً")
 
 st.markdown("<br>", unsafe_allow_html=True)
-if st.button("🚀 توليد ومعالجة التقرير الماسي"):
+if st.button("🚀 توليد ومعالجة التقرير النهائي"):
     if p_name:
         st.success("تم التوليد بنجاح! اختر صيغة التصدير:")
-        word_data = make_docx(p_name, rtype, donor, loc, agency, user_responses)
+        word_data = get_word_file(p_name, rtype, donor, loc, agency, duration, user_responses)
         
-        ec1, ec2, ec3 = st.columns(3)
+        ec1, ec2 = st.columns(2)
         with ec1:
             st.markdown('<div class="export-btn">', unsafe_allow_html=True)
-            st.download_button("📝 Word", word_data, f"{p_name}.docx")
+            st.download_button("📝 تحميل ملف Word المعتمد", word_data, f"{p_name}.docx")
             st.markdown('</div>', unsafe_allow_html=True)
         with ec2:
             st.markdown('<div class="export-btn">', unsafe_allow_html=True)
-            st.button("📄 PDF (Coming Soon)") # لتجنب انهيار السيرفر حالياً
+            st.download_button("📋 تحميل نص سريع", f"{p_name}\n{user_responses}", f"{p_name}.txt")
             st.markdown('</div>', unsafe_allow_html=True)
-        with ec3:
-            st.markdown('<div class="export-btn">', unsafe_allow_html=True)
-            st.download_button("📋 Text", f"تقرير {rtype}\nمشروع: {p_name}\n{user_responses}", f"{p_name}.txt")
-            st.markdown('</div>', unsafe_allow_html=True)
-    else: st.error("أدخل اسم المشروع")
+    else: st.error("⚠️ يرجى إدخال اسم المشروع أولاً.")
 
 st.markdown(f'<center><a href="https://wa.me/967774575749" class="whatsapp-btn">💬 تواصل للترقية أو الدعم الفني</a></center>', unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
