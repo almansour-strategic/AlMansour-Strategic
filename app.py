@@ -1,112 +1,145 @@
 import streamlit as st
-from datetime import datetime
 from docx import Document
+from docx.shared import Pt
+from docx.enum.text import WD_ALIGN_PARAGRAPH
 from io import BytesIO
+from datetime import datetime
 
-# ================== 1. الهوية البصرية الملكية (فخامة مؤسسية) ==================
-st.set_page_config(page_title="المنصور AI - V29 المستقر", layout="centered")
+# ================== 1. الهوية البصرية (Sovereign Look & Feel) ==================
+st.set_page_config(page_title="المنصور AI - المنهجية العالمية", layout="wide")
 
 st.markdown("""
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
-    div[data-testid="stToolbar"], #MainMenu, footer, header, .stDeployButton { display: none !important; }
-    .stApp { background-color: #f8fafc; color: #1e293b; direction: rtl; }
-    .main-box {
-        background: #ffffff; border-top: 10px solid #1e3a8a; padding: 40px;
-        border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.05); margin-top: 10px;
-    }
-    * { font-family: 'Cairo', sans-serif !important; text-align: right; }
-    .brand-title { color: #1e3a8a !important; font-weight: 900 !important; font-size: 2.3rem !important; text-align: center; }
-    .methodology-tag { 
-        background: #1e3a8a; color: #fbbf24; padding: 6px 20px; border-radius: 25px; 
-        font-size: 0.85rem; display: table; margin: 10px auto 30px auto; font-weight: bold;
-    }
-    .section-title { 
-        color: #1e3a8a; font-size: 1.1rem; font-weight: 700; margin-top: 25px; margin-bottom: 15px; 
-        border-right: 5px solid #fbbf24; padding-right: 12px; background: #f8fafc; padding: 10px; border-radius: 0 8px 8px 0;
-    }
-    .hint-text { color: #64748b; font-size: 0.82rem; margin-bottom: 12px; border-right: 2px solid #cbd5e1; padding-right: 10px; line-height: 1.5; }
-    .btn-gen button { background: linear-gradient(90deg, #1e3a8a, #d4af37) !important; color: white !important; font-weight: 700 !important; height: 58px !important; border-radius: 12px !important; width: 100% !important; border:none !important; }
-    .export-btn button { background: #ffffff !important; color: #1e3a8a !important; border: 1px solid #1e3a8a !important; font-weight: 600 !important; height: 45px !important; width: 100% !important; }
-    .whatsapp-btn { background: #25d366; color: white !important; padding: 12px 25px; border-radius: 50px; text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 10px; margin-top: 20px; }
-    </style>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+* { font-family: 'Cairo', sans-serif !important; direction: rtl; text-align: right; }
+.stApp { background: #f0f2f5; }
+.main-card { background: white; padding: 40px; border-radius: 20px; border-top: 12px solid #1e3a8a; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+.brand-title { color: #1e3a8a; font-weight: 900; text-align: center; font-size: 2.5rem; margin-bottom: 0; }
+.methodology-tag { background: #1e3a8a; color: #fbbf24; padding: 4px 15px; border-radius: 20px; font-size: 0.8rem; display: table; margin: 5px auto 25px auto; }
+.section-head { background: #f8fafc; padding: 10px; border-radius: 8px; border-right: 6px solid #fbbf24; color: #1e3a8a; font-weight: 700; margin: 20px 0; }
+.hint-box { color: #64748b; font-size: 0.85rem; margin-bottom: 8px; background: #fffbeb; padding: 8px; border-radius: 5px; border: 1px solid #fde68a; }
+</style>
 """, unsafe_allow_html=True)
 
-# ================== 2. المنهجية والتقارير السيادية (8 أنواع) ==================
-REPORTS_DB = {
-    "📑 تقرير الإنجاز الدوري | Progress Report": ["ملخص التنفيذ", "تحليل الانحرافات", "إدارة التحديات", "آليات التجاوز"],
-    "🎓 تقرير ختامي لتدريب | Capacity Building": ["نتائج التقييم", "كفاءة المنهجية", "تفاعل المشاركين", "استدامة الأثر"],
-    "💰 تقرير الأداء المالي | Financial Report": ["تحليل المصروفات", "انحرافات التكلفة", "الامتثال والتدقيق", "توصيات الكفاءة"],
-    "📊 تقرير المتابعة والتقييم | M&E Report": ["مؤشرات الأداء", "جودة المخرجات", "الدروس المستفادة", "فرص التحسين"],
-    "🚑 تقرير تقييم الاحتياجات | Needs Assessment": ["تحليل الفجوة", "الفئات المستهدفة", "الأولويات العاجلة", "توصيات التدخل"],
-    "🏛️ تقرير الحوكمة والامتثال | Compliance": ["الالتزام باللوائح", "نتائج الرقابة", "الثغرات المرصودة", "إجراءات التصحيح"],
-    "🌍 تقرير الأثر البيئي والاجتماعي | ESIA": ["الأثر البيئي", "المسؤولية المجتمعية", "إجراءات التخفيف", "الاستدامة"],
-    "🏗️ تقرير فني وهندسي | Technical Report": ["المواصفات الفنية", "اختبارات الجودة", "المعوقات التقنية", "الحلول المنفذة"]
+# ================== 2. قاعدة البيانات (المنهجية العالمية المستخرجة من الويب) ==================
+GLOBAL_DB = {
+    "🎓 ختامي لبرنامج تدريبي (Kirkpatrick)": [
+        ("قياس رد الفعل والتعلم (Learning)", "أبدى 90% من المشاركين استيعاباً كاملاً للمفاهيم التقنية المتقدمة..."),
+        ("تعديل السلوك وتطبيق المهارات", "تم رصد تحسن ملحوظ في سرعة أداء المهام الميدانية بنسبة 30%..."),
+        ("الأثر النهائي على المؤسسة (Results)", "ساهم التدريب في تقليل الأخطاء الإجرائية بنسبة 20% خلال شهر..."),
+        ("توصيات الاستدامة التدريبية", "ضرورة تفعيل نظام 'التوجيه الميداني' لضمان استمرار انتقال المعرفة...")
+    ],
+    "📊 المتابعة والتقييم (MEAL - RBM)": [
+        ("تحقيق النتائج مقابل المخطط (Outcome)", "تم الوصول إلى 95% من المستهدفات الاستراتيجية المحددة في الإطار المنطقي..."),
+        ("كفاءة استخدام الموارد (Efficiency)", "تم تحقيق المخرجات بأقل من الميزانية المرصودة بنسبة 5% نتيجة تحسين المشتريات..."),
+        ("رضا المستفيدين والمساءلة", "سجلت منصة الشكاوى نسبة رضا بلغت 4.8/5 مع استجابة فورية لكافة الملاحظات..."),
+        ("الدروس المستفادة للتدخلات القادمة", "أثبت إشراك المجتمع المحلي في التخطيط نجاحاً باهراً في سرعة التنفيذ...")
+    ],
+    "🌍 تقرير الاستدامة (ESG Reporting)": [
+        ("الأثر البيئي والمسؤولية المناخية", "تبني حلول الطاقة النظيفة أدى لخفض الانبعاثات بمعدل 10 أطنان سنوياً..."),
+        ("المسؤولية المجتمعية والنوع الاجتماعي", "تحقيق توازن جندري بنسبة 40% في المناصب القيادية داخل المشروع..."),
+        ("الحوكمة والامتثال الأخلاقي", "الالتزام الكامل بمدونة السلوك العالمية وعدم رصد أي مخالفات إجرائية..."),
+        ("الرؤية المستقبلية للاستدامة", "خطة التحول الرقمي الكامل لتقليل استهلاك الورق بنسبة 100%...")
+    ]
+    # يمكن إضافة بقية الـ 15 نوعاً بنفس المنهجية
 }
 
-# ================== 3. المحركات التشغيلية الصافية ==================
-def create_word(p_name, rtype, donor, loc, agency, content):
+# ================== 3. المحرك الذكي (The Polisher) ==================
+def polish_text(text):
+    """وظيفة لمحاكاة تحسين النص بكلمات استشارية"""
+    if not text: return "لم يتم تقديم بيانات."
+    replacements = {
+        "عملنا": "تم تنفيذ وتحقيق",
+        "صار": "نتج عن ذلك",
+        "المشكلة": "التحدي الاستراتيجي",
+        "الحل": "إجراء التخفيف والمعالجة",
+        "كويس": "وفق المعايير القياسية المعتمدة"
+    }
+    for old, new in replacements.items():
+        text = text.replace(old, new)
+    return text
+
+def generate_sovereign_docx(meta, content, risks, custom_axes=[]):
     doc = Document()
-    doc.add_heading(f"Report: {rtype}", 0)
-    doc.add_paragraph(f"Project: {p_name}\nDonor: {donor}\nAgency: {agency}\nLocation: {loc}")
+    doc.add_heading(f"التقرير الاستراتيجي: {meta['type']}", 0).alignment = WD_ALIGN_PARAGRAPH.CENTER
+    
+    # الجدول التعريفي
+    t = doc.add_table(rows=4, cols=2); t.style = 'Table Grid'
+    data = [("المشروع", meta['name']), ("الجهة", meta['entity']), ("الإنجاز", f"{meta['progress']}%"), ("التاريخ", datetime.now().strftime("%Y/%m/%d"))]
+    for i, (k, v) in enumerate(data):
+        t.cell(i, 0).text = k; t.cell(i, 1).text = str(v)
+
+    # المحتويات
     for title, text in content.items():
         doc.add_heading(title, level=1)
-        doc.add_paragraph(text if text else "N/A")
-    bio = BytesIO()
-    doc.save(bio)
-    bio.seek(0)
+        doc.add_paragraph(polish_text(text)) # تطبيق المحسن الذكي
+
+    if custom_axes:
+        doc.add_heading("محاور تخصصية إضافية", level=1)
+        for ct, cd in custom_axes:
+            doc.add_heading(ct, level=2); doc.add_paragraph(polish_text(cd))
+
+    doc.add_page_break()
+    doc.add_heading("مصفوفة المخاطر والامتثال (Global Standard)", level=1)
+    rt = doc.add_table(rows=1, cols=3); rt.style = 'Table Grid'
+    for i, h in enumerate(["الخطر", "الأثر", "المعالجة"]): rt.rows[0].cells[i].text = h
+    for r in risks:
+        row = rt.add_row().cells
+        row[0].text, row[1].text, row[2].text = r
+
+    bio = BytesIO(); doc.save(bio); bio.seek(0)
     return bio
 
-# ================== 4. نظام التشغيل ==================
-if "auth" not in st.session_state: st.session_state.auth = False
+# ================== 4. الواجهة ==================
+st.markdown('<div class="main-card">', unsafe_allow_html=True)
+st.markdown('<h1 class="brand-title">المنصور AI</h1>', unsafe_allow_html=True)
+st.markdown('<div class="methodology-tag">المنهجية العالمية القائمة على النتائج (RBM)</div>', unsafe_allow_html=True)
 
-if not st.session_state.auth:
-    st.markdown('<div class="main-box">', unsafe_allow_html=True)
-    st.markdown('<h1 class="brand-title">بوابة المنصور AI</h1>', unsafe_allow_html=True)
-    if st.button("دخول آمن للمنصة"):
-        st.session_state.auth = True
-        st.rerun()
-    st.stop()
+# المدخلات
+c1, c2, c3 = st.columns([2, 2, 1])
+with c1: 
+    rtype = st.selectbox("🎯 التخصص المنهجي:", list(GLOBAL_DB.keys()))
+    p_name = st.text_input("📦 اسم المشروع / البرنامج:")
+with c2:
+    entity = st.text_input("🏢 الجهة المانحة / الشريك:")
+    loc = st.text_input("📍 الموقع:")
+with c3:
+    progress = st.number_input("📊 الإنجاز %", 0, 100, 50)
 
-st.markdown('<div class="main-box">', unsafe_allow_html=True)
-st.markdown('<h1 class="brand-title">المنصور AI للتقارير الاحترافية</h1>', unsafe_allow_html=True)
-st.markdown('<div class="methodology-tag">صياغة استراتيجية احترافية | 2026</div>', unsafe_allow_html=True)
+# الأسئلة المنهجية
+st.markdown('<p class="section-head">١. صياغة المحاور (وفق المعايير الدولية المحدثة)</p>', unsafe_allow_html=True)
+user_content = {}
+for label, hint in GLOBAL_DB[rtype]:
+    st.markdown(f"**{label}**")
+    st.markdown(f'<div class="hint-box">💡 مثال صياغة خبير: {hint}</div>', unsafe_allow_html=True)
+    user_content[label] = st.text_area("", key=f"in_{label}", height=80, label_visibility="collapsed")
 
-rtype = st.selectbox("🎯 حدد نوع التقرير:", list(REPORTS_DB.keys()))
-fields = REPORTS_DB[rtype]
+# المحاور المخصصة
+with st.expander("➕ إضافة محاور إضافية (لتلبية طلبات خاصة)"):
+    num = st.number_input("عدد المحاور:", 0, 5, 0)
+    c_axes = []
+    for i in range(num):
+        ca1, ca2 = st.columns([1, 2])
+        with ca1: ct = st.text_input(f"العنوان {i+1}", key=f"ct_{i}")
+        with ca2: cd = st.text_area(f"المحتوى {i+1}", key=f"cd_{i}")
+        if ct: c_axes.append((ct, cd))
 
-st.markdown('<p class="section-title">بيانات المشروع</p>', unsafe_allow_html=True)
-c1, c2 = st.columns(2)
-p_name = c1.text_input("اسم المشروع *", key="v29_p_name")
-donor = c1.text_input("الجهة المانحة", key="v29_donor")
-loc = c2.text_input("مكان التنفيذ", key="v29_loc")
-agency = c2.text_input("الجهة المنفذة", key="v29_agency")
+# المخاطر
+st.markdown('<p class="section-head">٢. مصفوفة المخاطر والتحقق</p>', unsafe_allow_html=True)
+risks = []
+for r_tag in ["مخاطر استراتيجية", "مخاطر تشغيلية"]:
+    cr1, cr2, cr3 = st.columns([2, 1, 3])
+    with cr1: st.write(f"**{r_tag}**")
+    with cr2: rlvl = st.selectbox("الأثر", ["منخفض", "متوسط", "عالي"], key=f"lv_{r_tag}")
+    with cr3: rmit = st.text_input("خطة المعالجة:", key=f"mit_{r_tag}")
+    risks.append((r_tag, rlvl, rmit))
 
-st.markdown('<p class="section-title">المحاور الاستراتيجية</p>', unsafe_allow_html=True)
-user_responses = {}
-for i, label in enumerate(fields):
-    st.markdown(f"<label>{label}</label>", unsafe_allow_html=True)
-    txt = st.text_area("", key=f"v29_area_{i}_{rtype}", height=100, label_visibility="collapsed")
-    user_responses[label] = txt
-    if st.button(f"✨ تحسين", key=f"v29_btn_{i}_{rtype}"):
-        if txt: st.info(f"المقترح: {txt} (تمت المراجعة)")
+if st.button("🚀 معالجة وتوليد التقرير السيادي"):
+    if not p_name: st.error("يرجى تسمية المشروع.")
+    else:
+        meta = {"type": rtype, "name": p_name, "entity": entity, "progress": progress, "loc": loc}
+        file = generate_sovereign_docx(meta, user_content, risks, c_axes)
+        st.download_button("📥 تحميل التقرير المعتمد (Word)", file, file_name=f"Strategic_Report_{p_name}.docx")
+        st.balloons()
 
-st.markdown("<br>", unsafe_allow_html=True)
-if st.button("🚀 توليد ومعالجة التقرير النهائي"):
-    if p_name:
-        st.success("التقرير جاهز! اختر صيغة التصدير:")
-        word_data = create_word(p_name, rtype, donor, loc, agency, user_responses)
-        
-        ec1, ec2 = st.columns(2)
-        with ec1:
-            st.markdown('<div class="export-btn">', unsafe_allow_html=True)
-            st.download_button("📝 تحميل ملف Word", word_data, f"{p_name}.docx")
-            st.markdown('</div>', unsafe_allow_html=True)
-        with ec2:
-            st.markdown('<div class="export-btn">', unsafe_allow_html=True)
-            st.download_button("📋 تحميل نص سريع", f"{p_name}\n{user_responses}", f"{p_name}.txt")
-            st.markdown('</div>', unsafe_allow_html=True)
-    else: st.error("⚠️ يرجى إدخال اسم المشروع أولاً.")
-
-st.markdown(f'<center><a href="https://wa.me/967774575749" class="whatsapp-btn">💬 تواصل للدعم الفني</a></center>', unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
