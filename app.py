@@ -1,14 +1,15 @@
+
 import streamlit as st
 from datetime import datetime
 
-# ================== 1. التنسيق البصري السيادي (إخفاء تام + فخامة) ==================
+# ================== 1. التنسيق البصري الملكي (إخفاء تام + تنظيم دقيق) ==================
 st.set_page_config(page_title="المنصور AI - المنهجية العالمية", layout="centered")
 
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
     
-    /* إخفاء تام لكل ما له علاقة ببرمجيات المنصة (السرية التامة) */
+    /* إخفاء تام لكل أدوات المنصة */
     div[data-testid="stToolbar"], #MainMenu, footer, header, .stDeployButton, [data-testid="stStatusWidget"] {
         display: none !important; visibility: hidden !important;
     }
@@ -17,42 +18,42 @@ st.markdown("""
     
     .main-box {
         background: #ffffff;
-        border-top: 8px solid #d4af37;
+        border-top: 10px solid #d4af37;
         padding: 40px;
         border-radius: 25px;
-        box-shadow: 0 15px 50px rgba(0,0,0,0.05);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.05);
         margin-top: 20px;
     }
 
     * { font-family: 'Cairo', sans-serif !important; }
-    .brand-title { color: #1e3a8a !important; font-weight: 900 !important; font-size: 2.8rem !important; text-align: center; margin:0; }
+    .brand-title { color: #1e3a8a !important; font-weight: 900 !important; font-size: 2.5rem !important; text-align: center; margin:0; }
     .methodology-tag { 
         background: #1e3a8a; color: #fbbf24; padding: 6px 20px; border-radius: 25px; 
-        font-size: 0.9rem; display: table; margin: 10px auto 30px auto; font-weight: bold;
+        font-size: 0.85rem; display: table; margin: 10px auto 30px auto; font-weight: bold;
     }
 
-    /* تنسيق الحقول لتبدو فخمة وواضحة */
-    label { color: #1e3a8a !important; font-weight: 700 !important; font-size: 1.1rem !important; }
+    /* تنسيق الحقول */
+    label { color: #1e3a8a !important; font-weight: 700 !important; font-size: 1.1rem !important; margin-bottom: 5px !important; }
     .stTextArea textarea, .stTextInput input { 
         border: 1.5px solid #cbd5e1 !important; border-radius: 12px !important; 
-        background: #fdfdfd !important; font-size: 1.1rem !important;
+        background: #ffffff !important; font-size: 1.1rem !important;
     }
+    
+    /* نص الإرشاد الثابت تحت السؤال */
+    .hint-text { color: #64748b; font-size: 0.85rem; margin-bottom: 15px; margin-top: -5px; line-height: 1.4; border-right: 3px solid #fbbf24; padding-right: 10px; }
 
-    /* الأزرار المتوازية بنفس الحجم والقوة */
+    /* الأزرار المتوازية */
     .stButton>button {
         width: 100% !important; height: 60px !important; border-radius: 15px !important;
         font-weight: 700 !important; font-size: 1.2rem !important; border: none !important; transition: 0.4s;
     }
-    /* زر التوليد الذهبي */
-    div[data-testid="stVerticalBlock"] > div:nth-child(13) button {
+    div[data-testid="stVerticalBlock"] > div:nth-child(16) button {
         background: linear-gradient(90deg, #d4af37, #b45309) !important; color: white !important;
     }
-    /* زر الخروج الرمادي الرصين */
-    div[data-testid="stVerticalBlock"] > div:nth-child(14) button {
+    div[data-testid="stVerticalBlock"] > div:nth-child(17) button {
         background: #f1f5f9 !important; color: #64748b !important; border: 1px solid #e2e8f0 !important;
     }
     
-    /* زر الأداة السحرية */
     .magic-btn button {
         height: 35px !important; font-size: 0.85rem !important; background: #f0f9ff !important;
         color: #0369a1 !important; border: 1px dashed #0369a1 !important; margin-top: 10px;
@@ -60,15 +61,14 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# ================== 2. المنهجية العالمية (مصفوفة السياق الذكي) ==================
+# ================== 2. مصفوفة التقارير المتعمقة (منهجية المستشارين) ==================
 REPORT_TYPES = {
-    "📊 تقرير إنجاز ميداني": {"p": "تم استكمال المرحلة الأولى بنسبة إنجاز 85% وفق المخطط...", "hint": "ركز على المخرجات الملموسة."},
-    "💰 تقرير مالي واستراتيجي": {"p": "تحقيق وفورات مالية بنسبة 12% نتيجة تحسين سلاسل التوريد...", "hint": "استخدم الأرقام ومقارنات الميزانية."},
-    "🚑 تقرير طبي وصحي": {"p": "انخفاض معدل العدوى بنسبة 15% بعد تطبيق بروتوكول التعقيم الجديد...", "hint": "ركز على مؤشرات الأداء السريري."},
-    "🏛️ تقرير حوكمة وامتثال": {"p": "تطابق كافة العمليات بنسبة 100% مع معايير الجودة العالمية...", "hint": "ركز على السياسات واللوائح."},
-    "🏗️ تقرير تقني وهندسي": {"p": "أظهرت نتائج الفحص الفني استدامة الهيكل تحت ضغوط تفوق المعايير...", "hint": "استخدم المصطلحات الهندسية الدقيقة."},
-    "🌍 تقرير تنموي وإغاثي": {"p": "توزيع المساعدات لـ 1200 مستفيد في المناطق الأشد احتياجاً...", "hint": "ركز على أثر المشروع المجتمعي."},
-    "👥 تقرير إداري ومحضر": {"p": "اعتماد الهيكل التنظيمي الجديد وتوزيع التكليفات الإدارية العاجلة...", "hint": "ركز على القرارات والمسؤوليات."}
+    "📑 تقرير إنجاز مشاريع تنموية": {"hint": "نموذج الـ (LogFrame). ركز على المخرجات المباشرة والأثر المجتمعي المستدام."},
+    "🎓 تقرير ختامي لبرامج تدريبية": {"hint": "نموذج (Kirkpatrick). ركز على تفاعل المشاركين، المهارات المكتسبة، وتقييم المدرب."},
+    "💰 تقرير تدقيق مالي واستراتيجي": {"hint": "معايير (IFRS). ركز على الميزانية الفعلية مقابل المخطط وتحليل الانحرافات."},
+    "🚑 تقرير طبي وتشغيلي": {"hint": "معايير (JCI). ركز على كفاءة الخدمة، سلامة المرضى، وإحصائيات الاستجابة."},
+    "🏗️ تقرير فني وهندسي": {"hint": "معايير (FIDIC). ركز على المواصفات الفنية، الجداول الزمنية، واختبارات الجودة."},
+    "🏛️ تقرير حوكمة وامتثال": {"hint": "ركز على مصفوفة المخاطر، والالتزام باللوائح والشفافية المؤسسية."}
 }
 
 # ================== 3. بوابة الدخول ==================
@@ -77,7 +77,7 @@ if "auth" not in st.session_state: st.session_state.auth = False
 if not st.session_state.auth:
     st.markdown('<div class="main-box">', unsafe_allow_html=True)
     st.markdown('<h1 class="brand-title">المنصور AI</h1>', unsafe_allow_html=True)
-    st.markdown('<div class="methodology-tag">بوابة الوصول المعتمدة 2026</div>', unsafe_allow_html=True)
+    st.markdown('<div class="methodology-tag">بوابة الوصول المعتمدة - شبكة المستشارين</div>', unsafe_allow_html=True)
     email = st.text_input("البريد الإلكتروني")
     pwd = st.text_input("كلمة المرور", type="password")
     if st.button("دخول آمن للمنصة"):
@@ -85,54 +85,61 @@ if not st.session_state.auth:
     st.markdown('</div>', unsafe_allow_html=True)
     st.stop()
 
-# ================== 4. المحرك الرئيسي (تطبيق كل القواعد) ==================
+# ================== 4. المحرك الرئيسي ==================
 st.markdown('<div class="main-box">', unsafe_allow_html=True)
 st.markdown('<h1 class="brand-title">المنصور AI للتقارير الاحترافية</h1>', unsafe_allow_html=True)
-st.markdown('<div class="methodology-tag">تطبيق المنهجية العالمية (PMBOK / ISO / UN Standards)</div>', unsafe_allow_html=True)
+st.markdown('<div class="methodology-tag">نظام صياغة التقارير وفق المنهجية العالمية (PMBOK / ISO / Kirkpatrick)</div>', unsafe_allow_html=True)
 
-# اختيار نوع التقرير وتغيير السياق تلقائياً
-rtype = st.selectbox("🎯 اختر تخصص التقرير لضبط الأمثلة الذكية:", list(REPORT_TYPES.keys()))
-meta = REPORT_TYPES[rtype]
+# القسم الأول: البيانات التعريفية (حجر الزاوية)
+st.markdown("### 📌 البيانات التعريفية للمشروع")
+col1, col2 = st.columns(2)
+with col1:
+    p_name = st.text_input("اسم المشروع / البرنامج التدريبي")
+    client_name = st.text_input("الجهة المنفذة / العميل")
+    start_date = st.date_input("تاريخ بدء التنفيذ")
+with col2:
+    donor_name = st.text_input("اسم الجهة المانحة / الممول")
+    location = st.text_input("مكان التنفيذ / المنطقة المستهدفة")
+    duration = st.text_input("مدة التنفيذ (بالأيام/الأسابيع)")
 
-st.info(f"💡 **توصية المنهجية:** {meta['hint']}")
-
-# عنوان التقرير
-p_title = st.text_input("📍 عنوان التقرير الاستراتيجي", placeholder="مثال: تقرير الأداء الختامي لعام 2025")
+rtype = st.selectbox("🎯 اختر تخصص التقرير لضبط المعايير:", list(REPORT_TYPES.keys()))
+st.info(f"💡 **توصية المنهجية:** {REPORT_TYPES[rtype]['hint']}")
 
 st.markdown("---")
 
-# دالة الحقول الذكية (تجمع بين السؤال، المثال، والأداة السحرية)
-def smart_field(label, key, placeholder):
+# دالة الحقول المنهجية (تجمع بين السؤال، المثال الثابت، والأداة السحرية)
+def smart_field(label, key, hint_text):
+    st.markdown(f"<label>{label}</label>", unsafe_allow_html=True)
+    st.markdown(f"<p class='hint-text'>🔍 <b>مثال توضيحي:</b> {hint_text}</p>", unsafe_allow_html=True)
     col_t, col_b = st.columns([5, 1])
     with col_t:
-        val = st.text_area(label, key=key, placeholder=f"مثال للعميل: {placeholder}")
+        val = st.text_area("", key=key, label_visibility="collapsed")
     with col_b:
-        st.markdown("<br>", unsafe_allow_html=True)
         st.markdown('<div class="magic-btn">', unsafe_allow_html=True)
         if st.button("✨ تحسين", key=f"ai_{key}"):
-            st.toast("الأداة السحرية: جاري تحويل النص لصياغة عالمية...", icon="🪄")
+            st.toast("جاري تحويل النص لصياغة عالمية...")
         st.markdown('</div>', unsafe_allow_html=True)
     return val
 
-# الأسئلة المنهجية (المنطقية والكاملة)
-q1 = smart_field("1️⃣ الملخص التنفيذي وأبرز الإنجازات الجوهرية:", "q1", meta['p'])
-q2 = smart_field("2️⃣ بيئة العمل والظروف الميدانية الراهنة:", "q2", "صف الموقع والظروف السياسية/المناخية المؤثرة...")
-q3 = smart_field("3️⃣ التحديات والعقبات (ما الذي أعاق التقدم؟):", "q3", "مثال: نقص التمويل، تأخر التوريد، صعوبات لوجستية...")
-q4 = smart_field("4️⃣ آليات التجاوز (الحلول المبتكرة التي نُفذت):", "q4", "مثال: تم استخدام الموارد البديلة وتفعيل خطة الطوارئ 'ب'...")
-q5 = smart_field("5️⃣ التوصيات الاستراتيجية والدروس المستفادة:", "q5", "مثال: ينصح بزيادة التدريب التقني للفريق في المرحلة القادمة...")
+# الأسئلة المنهجية المكتملة
+q1 = smart_field("1️⃣ الملخص التنفيذي وأهداف التقرير:", "q1", "تحقيق الأهداف الاستراتيجية للربع الأول بنسبة 95% وتعزيز قدرات 50 متدرب...")
+q2 = smart_field("2️⃣ بيئة العمل والقيود الميدانية:", "q2", "تم العمل في ظروف جوية متقلبة مع الالتزام التام بمعايير السلامة المهنية...")
+q3 = smart_field("3️⃣ التحديات والعقبات المرصودة:", "q3", "نقص في الكادر الفني المتخصص، وتأخر وصول الشحنة اللوجستية لمدة 3 أيام...")
+q4 = smart_field("4️⃣ آليات التجاوز (الحلول المنفذة):", "q4", "تم استدعاء فريق الدعم الطارئ وتفعيل مخازن الاحتياط لضمان استمرارية العمل...")
+q5 = smart_field("5️⃣ التوصيات والدروس المستفادة:", "q5", "ينصح بتبني نظام التوريد المسبق لتجنب التأخير في المشاريع القادمة...")
 
-# الرسوم البيانية الجمالية
-st.markdown("### 📈 مؤشر الإنجاز الكلي (بصري)")
-progress = st.select_slider("حدد مستوى التقدم الكلي للمشروع:", options=list(range(0, 101, 10)), value=60)
+# عنصر الجماليات
+st.markdown("### 📈 مؤشر الإنجاز الكلي")
+progress = st.select_slider("حدد مستوى التقدم الكلي:", options=list(range(0, 101, 10)), value=60)
 st.progress(progress / 100)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# الأزرار المتوازية (التوليد والخروج) بنفس الحجم والتوازن
+# الأزرار المتوازية
 col_gen, col_ex = st.columns(2)
 with col_gen:
     if st.button("🚀 توليد التقرير الماسي"):
-        st.success("تم التوليد وفق المنهجية العالمية!")
+        st.success("تم التوليد بنجاح!")
         st.balloons()
 
 with col_ex:
@@ -140,13 +147,5 @@ with col_ex:
         st.session_state.auth = False
         st.rerun()
 
-# خيارات التصدير المتعددة
-st.markdown("---")
-st.write("📂 خيارات التصدير الاحترافية:")
-c1, c2, c3 = st.columns(3)
-c1.button("📥 ملف PDF رسمي")
-c2.button("📥 ملف Word مسودة")
-c3.button("📥 نص Text سريع")
-
 st.markdown('</div>', unsafe_allow_html=True)
-st.markdown("<center style='color:#94a3b8; font-size:0.8rem;'>🛡️ شبكة المنصور للاستشارات | إدارة البيانات 2026</center>", unsafe_allow_html=True)
+st.markdown("<center style='color:#94a3b8; font-size:0.8rem; margin-top:15px;'>🛡️ شبكة المنصور للاستشارات | إدارة البيانات 2026</center>", unsafe_allow_html=True)
